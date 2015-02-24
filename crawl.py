@@ -44,24 +44,6 @@ for stock_id in stock_id_list[task_id*task_base:(task_id+1)*task_base]:
             raise Exception("HTTP Request Failed")
 
         content = json.loads(page.content)
-
-        # 讀取上一筆資料
-        count = 0
-
-        if isfile(join('data', today, stock_id+'.csv')):
-            with open(join('data', today, stock_id+'.csv'), 'rb') as ftmp:
-                for last_data in csv.reader(ftmp, delimiter=','):
-                    count += 1
-
-        
-        # - t：資料時間，ex. `13:30:00`
-        # - z：最近成交價，ex. `42.85`
-        # - tv：Temporal Volume，當盤成交量，ex. `1600`
-        # - v：Volume，當日累計成交量，ex. `11608`
-        # - a：最佳五檔賣出價格，ex. `42.85_42.90_42.95_43.00_43.05_`
-        # - f：最價五檔賣出數量，ex. `83_158_277_571_233_`
-        # - b：最佳五檔買入價格，ex. `42.80_42.75_42.70_42.65_42.60_`
-        # - g：最佳五檔買入數量，ex. `10_28_10_2_184_`
     
         # 檢查資料是否錯誤
         if 'msgArray' not in content:
@@ -80,6 +62,24 @@ for stock_id in stock_id_list[task_id*task_base:(task_id+1)*task_base]:
             # 昨天沒有資料夾的話幫忙補上
             if not isdir(join('data',today)):
                 mkdir(join('data',today))
+
+        # 讀取上一筆資料
+        count = 0
+
+        if isfile(join('data', today, stock_id+'.csv')):
+            with open(join('data', today, stock_id+'.csv'), 'rb') as ftmp:
+                for last_data in csv.reader(ftmp, delimiter=','):
+                    count += 1
+
+        # 資料格式
+        # - t：資料時間，ex. `13:30:00`
+        # - z：最近成交價，ex. `42.85`
+        # - tv：Temporal Volume，當盤成交量，ex. `1600`
+        # - v：Volume，當日累計成交量，ex. `11608`
+        # - a：最佳五檔賣出價格，ex. `42.85_42.90_42.95_43.00_43.05_`
+        # - f：最價五檔賣出數量，ex. `83_158_277_571_233_`
+        # - b：最佳五檔買入價格，ex. `42.80_42.75_42.70_42.65_42.60_`
+        # - g：最佳五檔買入數量，ex. `10_28_10_2_184_`
 
         # 如果有歷史資料，而且資料和上一筆一模一樣，就不要紀錄
         if (count > 0 and vals['t'] == last_data[0] and vals['z'] == last_data[1] and 
