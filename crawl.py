@@ -31,8 +31,6 @@ query_ids = ""
 for i in stock_id_list[task_from:task_to]:
     query_ids += ('tse_'+i+'.tw|')
 
-print stock_id_list[task_from], stock_id_list[task_to-1]
-
 # 錯誤輸出檔案
 error_log = open('error.log', 'a')
 

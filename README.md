@@ -1,6 +1,6 @@
 # Taiwan Stock Real Time Crawler
 
-這是一個會爬 150 隻當沖清單的 crawler，可以拿來做當沖的參考依據。
+這是一個會爬 150 隻當沖清單的 crawler。
 
 ## 使用方法
 
@@ -19,6 +19,7 @@
 - 每天爬完要整理資料
 - proxy
 - 分享資源
+- update readme
 
 ## 證交所 API Document （偽）
 
