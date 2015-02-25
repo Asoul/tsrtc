@@ -26,7 +26,6 @@ else:
     task_to = len(stock_id_list)
 
 # 連結 query
-
 query_ids = ""
 for i in stock_id_list[task_from:task_to]:
     query_ids += ('tse_'+i+'.tw|')
@@ -56,13 +55,17 @@ try:
     for i in range(len(content['msgArray'])):
         vals = content['msgArray'][i]
 
+        if vals['c'] not in stock_id_list:
+            error_log.write('[ERROR] '+vals['c']+'not in id list\n')
+            continue
+
         # 如果是在超過凌晨 12 點到隔日開市前抓，要算昨天的
         if vals['d'] != today:
             yesterday = date.today() - timedelta(1)
             today = str(yesterday.year).zfill(4)+str(yesterday.month).zfill(2)+str(yesterday.day).zfill(2)
             if vals['d'] != today:
                 raise Exception("Date Error")
-            # 昨天沒有資料夾的話幫忙補上
+            # 昨天沒有資料夾的話要補上
             if not isdir(join('data',today)):
                 mkdir(join('data',today))
 
