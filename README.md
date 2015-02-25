@@ -16,6 +16,7 @@
 
 ## TODO
 
+- 每天爬完要整理資料
 - proxy
 - 分享資源
 
@@ -39,7 +40,7 @@
 
 ```http://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=STOCK_NUMBER&json=1&delay=0```
 
-- STOCK_NUMBER 是該隻股票的種類和號碼，ex. `tse_1101.tw`
+- STOCK_NUMBER 是該隻股票的種類和號碼，ex. `tse_1101.tw`，也可以用 `|` 一次 query 很多筆股票資料。
 - json=1 不知為何，但參考的程式碼中是如此設定的
 - delay=0 不知為何，但參考的程式碼中是如此設定的
 
