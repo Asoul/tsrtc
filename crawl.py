@@ -11,10 +11,27 @@ import sys
 import math
 
 # 從 stocknumber.csv 中讀出要爬的股票清單
-query_ids = ""
+stock_id_list = []
 f = open('stocknumber.csv', 'rb')
 for row in csv.reader(f, delimiter=','):
-    query_ids += ('tse_'+row[0]+'.tw|')
+    stock_id_list.append(row[0])
+
+# 拆成小的 subtasks 的號碼
+if len(sys.argv) == 3:
+    task_from = int(sys.argv[1]) * int(math.ceil(len(stock_id_list)/int(sys.argv[2])))
+    task_to = min((int(sys.argv[1])+1) * int(math.ceil(len(stock_id_list)/int(sys.argv[2]))), len(stock_id_list))
+
+else:
+    task_from = 0
+    task_to = len(stock_id_list)
+
+# 連結 query
+
+query_ids = ""
+for i in stock_id_list[task_from:task_to]:
+    query_ids += ('tse_'+i+'.tw|')
+
+print stock_id_list[task_from], stock_id_list[task_to-1]
 
 # 錯誤輸出檔案
 error_log = open('error.log', 'a')
@@ -37,10 +54,8 @@ try:
     # 檢查資料是否錯誤
     if 'msgArray' not in content:
         raise Exception("Can not find msgArray")
-    if len(content['msgArray']) != 150:
-        raise Exception("msgArray not 150 error")
     
-    for i in range(150):
+    for i in range(len(content['msgArray'])):
         vals = content['msgArray'][i]
 
         # 如果是在超過凌晨 12 點到隔日開市前抓，要算昨天的
