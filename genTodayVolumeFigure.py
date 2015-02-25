@@ -47,6 +47,7 @@ for stock_id in index_list:
                 dist[float(row[1])] += int(row[2])
             else:
                 dist[float(row[1])] = int(row[2])
+        # 錯誤情況處理
         else:
             print row
 

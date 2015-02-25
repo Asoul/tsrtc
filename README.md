@@ -10,26 +10,22 @@
 
 ## 當沖清單
 
-1. 下載 [http://www.twse.com.tw/ch/trading/exchange/TWTB4U/TWTB4U.php](台灣證券交易所－當日沖銷交易標的及統計) 最新清單
+1. 下載 [台灣證券交易所－當日沖銷交易標的及統計](http://www.twse.com.tw/ch/trading/exchange/TWTB4U/TWTB4U.php) 最新清單
 2. 可能要更改 `getCurrentList.py` 的檔案名稱
 3. `python getCurrentList.py` 得到 `stocknumber.csv`
 
 ## TODO
 
-- 每天爬完要整理資料
-- proxy
-- 分享資源
-- update readme
-- frame rate 變成 3 秒
-- 只爬 0900 ~ 1325
 - 測試 0830 ~ 0900 的情況：(有價證券的開盤價格係當市第一筆成交價格，一般自上午 8：30 起證券商輸入委託，至上午 9：00 決定開盤價格時，已累積 30 分鐘買賣委託，故不執行瞬間價格穩定措施，而直接依漲跌幅範圍內，滿足最大成交量的價位成交。)
 - 測試 1325 ~ 1330 的情況：(收盤委託時間自下午 1：25 分起至下午 1：30 止，該 5 分鐘內暫停撮合，但電腦持續接受買賣申報輸入、改量及取消作業，直至下午 1：30 停止上述委託作業，再依集合競價決定收盤價格並執行撮合，針對個股收盤 5 分鐘集合競價結果，若無任何買賣申報得以成交時，則以當日最後一次成交價格作為收盤價；若當日均無成交者，則無收盤價。)
-- 每天完的整理數據
+- 每天完整理數據
 - 檢查 `13:27:49,74.80,5,1904,75.00_,0_,74.90_,0_ ` 是沒有最佳五檔的意思嗎？
+- 分享資源
+- update readme
 
 ## 證交所 API Document （偽）
 
-經過解析 [http://mis.twse.com.tw/stock/fibest.jsp](基本市況報導網站) 下所執行的 Javascript 檔（可以參考 `/ctrl-reference` ），整理出了 twse 的 API 清單如下：
+經過解析 [基本市況報導網站](http://mis.twse.com.tw/stock/fibest.jsp) 下所執行的 Javascript 檔（可以參考 `/ctrl-reference` ），整理出了 twse 的 API 清單如下：
 
 - getChartOhlcStatis
 - getDailyRangeOnlyKD
@@ -49,7 +45,7 @@
 http://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=STOCK_NUMBER&json=1&delay=0
 ```
 
-- STOCK_NUMBER 是該隻股票的種類和號碼，ex. `tse_1101.tw`，也可以用 `|` 一次 query 很多筆股票資料。
+- STOCK_NUMBER 是該隻股票的種類和號碼，ex. `tse_1101.tw`，也可以用 `|` 一次 query 很多筆股票資料。ex. `tse_1101.tw|tse_1102.tw|tse_1103.tw`
 - json=1 不知為何，但參考的程式碼中是如此設定的
 - delay=0 不知為何，但參考的程式碼中是如此設定的
 

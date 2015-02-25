@@ -17,7 +17,7 @@ for stock_id in index_list:
     rows = []
     f = open(join('data', today, stock_id+'.csv'), 'rb')
     for row in csv.reader(f, delimiter =','):
-        if len(rows) > 0 and rows[-1] == row:
+        if len(rows) > 0 and row in rows:
             continue
         else:
             rows.append(row)
@@ -27,3 +27,4 @@ for stock_id in index_list:
     cw = csv.writer(f, delimiter=',')
     for row in rows:
         cw.writerow(row)
+    
