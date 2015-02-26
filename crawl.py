@@ -48,71 +48,63 @@ try:
 
     content = json.loads(page.content)
 
-    # 檢查資料是否錯誤
-    if 'msgArray' not in content:
+    if 'msgArray' not in content or len(content['msgArray']) == 0:
         raise Exception("Can not find msgArray")
-    
-    for i in range(len(content['msgArray'])):
-        vals = content['msgArray'][i]
-        if 'c' not in vals:
-            error_log.write('[ERROR] c not in id list\n')
-            continue
-        if 'd' not in vals:
-            error_log.write('[ERROR] '+vals['c']+' d not in id list\n')
-            continue
-        if 't' not in vals:
-            error_log.write('[ERROR] '+vals['c']+' t not in id list\n')
-            continue
-        if 'z' not in vals:
-            error_log.write('[ERROR] '+vals['c']+' z not in id list\n')
-            continue
-        if 'tv' not in vals:
-            error_log.write('[ERROR] '+vals['c']+' tv not in id list\n')
-            continue
-        if 'v' not in vals:
-            error_log.write('[ERROR] '+vals['c']+' v not in id list\n')
-            continue
-        if 'a' not in vals:
-            error_log.write('[ERROR] '+vals['c']+' a not in id list\n')
-            continue
-        if 'f' not in vals:
-            error_log.write('[ERROR] '+vals['c']+' f not in id list\n')
-            continue
-        if 'b' not in vals:
-            error_log.write('[ERROR] '+vals['c']+' b not in id list\n')
-            continue
-        if 'g' not in vals:
-            error_log.write('[ERROR] '+vals['c']+' g not in id list\n')
-            continue
-        if vals['c'] not in stock_id_list:
-            error_log.write('[ERROR] '+vals['c']+'not in id list\n')
-            continue
 
-        # 如果是在超過凌晨 12 點到隔日開市前抓，要算昨天的
-        if vals['d'] != today:
-            yesterday = date.today() - timedelta(1)
-            today = str(yesterday.year).zfill(4)+str(yesterday.month).zfill(2)+str(yesterday.day).zfill(2)
-            if vals['d'] != today:
-                raise Exception("Date Error")
-            # 昨天沒有資料夾的話要補上
-            if not isdir(join('data',today)):
-                mkdir(join('data',today))
-
-        # 資料格式
-        # - t：資料時間，ex. `13:30:00`
-        # - z：最近成交價，ex. `42.85`
-        # - tv：Temporal Volume，當盤成交量，ex. `1600`
-        # - v：Volume，當日累計成交量，ex. `11608`
-        # - a：最佳五檔賣出價格，ex. `42.85_42.90_42.95_43.00_43.05_`
-        # - f：最價五檔賣出數量，ex. `83_158_277_571_233_`
-        # - b：最佳五檔買入價格，ex. `42.80_42.75_42.70_42.65_42.60_`
-        # - g：最佳五檔買入數量，ex. `10_28_10_2_184_`
-
-        fo = open(join('data', today, vals['c']+'.csv'), 'ab')
-        cw = csv.writer(fo, delimiter=',')
-        cw.writerow([vals['t'], vals['z'], vals['tv'], vals['v'], vals['a'], vals['f'], vals['b'], vals['g']])
-    
 except Exception as e:
-    err_str = '[ERROR] ' + e.message
+
+    # 資料 request 錯誤
+    err_str = '[ERROR] '+datetime.now().strftime('%Y/%M/%d %H:%m:%S') + e.message
     print err_str
     error_log.write(err_str+'\n')
+
+else:
+    for i in range(len(content['msgArray'])):
+        try:
+            vals = content['msgArray'][i]
+
+            # 檢查資料是否錯誤
+            if 'c' not in vals: raise Exception('c not in content')
+            if type(vals['c']) != str: raise Exception('c type in content')
+            
+            if 'd' not in vals: raise Exception(vals['c']+'d not in content')
+            if 't' not in vals: raise Exception(vals['c']+'t not in content')
+            if 'z' not in vals: raise Exception(vals['c']+'z not in content')
+            if 'v' not in vals: raise Exception(vals['c']+'v not in content')
+            if 'a' not in vals: raise Exception(vals['c']+'a not in content')
+            if 'f' not in vals: raise Exception(vals['c']+'f not in content')
+            if 'b' not in vals: raise Exception(vals['c']+'b not in content')
+            if 'g' not in vals: raise Exception(vals['c']+'g not in content')
+            if 'tv' not in vals: raise Exception(vals['c']+'tv not in content')
+
+            if vals['c'] not in stock_id_list: raise Exception(vals['c']+'c not in stock_id list')
+
+            # 如果是在超過凌晨 12 點到隔日開市前抓，要算昨天的
+            if vals['d'] != today:
+                yesterday = date.today() - timedelta(1)
+                today = str(yesterday.year).zfill(4)+str(yesterday.month).zfill(2)+str(yesterday.day).zfill(2)
+                if vals['d'] != today:
+                    raise Exception(vals['c']+"Date Error")
+                # 昨天沒有資料夾的話要補上
+                if not isdir(join('data',today)):
+                    mkdir(join('data',today))
+
+            # 資料格式
+            # - t：資料時間，ex. `13:30:00`
+            # - z：最近成交價，ex. `42.85`
+            # - tv：Temporal Volume，當盤成交量，ex. `1600`
+            # - v：Volume，當日累計成交量，ex. `11608`
+            # - a：最佳五檔賣出價格，ex. `42.85_42.90_42.95_43.00_43.05_`
+            # - f：最價五檔賣出數量，ex. `83_158_277_571_233_`
+            # - b：最佳五檔買入價格，ex. `42.80_42.75_42.70_42.65_42.60_`
+            # - g：最佳五檔買入數量，ex. `10_28_10_2_184_`
+
+            fo = open(join('data', today, vals['c']+'.csv'), 'ab')
+            cw = csv.writer(fo, delimiter=',')
+            cw.writerow([vals['t'], vals['z'], vals['tv'], vals['v'], vals['a'], vals['f'], vals['b'], vals['g']])
+    
+        except Exception as e:
+            err_str = '[ERROR] '+datetime.now().strftime('%Y/%M/%d %H:%m:%S') + e.message
+            print err_str
+            error_log.write(err_str+'\n')
+            continue

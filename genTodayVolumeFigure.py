@@ -48,12 +48,20 @@ for stock_id in index_list:
             else:
                 dist[float(row[1])] = int(row[2])
         # 錯誤情況處理
-        else:
-            print row
+        # else:
+            # print row
 
         last_z = float(row[1])
         last_tv = int(row[2])
         last_v = int(row[3])
 
-    print dist
-    break
+    tmplist = []
+    for i in dist:
+        tmplist.append([float(i), int(dist[i])])
+    tmplist.sort(key=lambda x: float(x[0]))
+    stock_count = 0
+    for i in tmplist:
+        # print i[0], i[1]
+        stock_count += i[1]
+    print 'count rate = %f' % (float(stock_count)/last_v)
+    # break
