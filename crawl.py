@@ -54,7 +54,36 @@ try:
     
     for i in range(len(content['msgArray'])):
         vals = content['msgArray'][i]
-
+        if 'c' not in vals:
+            error_log.write('[ERROR] c not in id list\n')
+            continue
+        if 'd' not in vals:
+            error_log.write('[ERROR] '+vals['c']+' d not in id list\n')
+            continue
+        if 't' not in vals:
+            error_log.write('[ERROR] '+vals['c']+' t not in id list\n')
+            continue
+        if 'z' not in vals:
+            error_log.write('[ERROR] '+vals['c']+' z not in id list\n')
+            continue
+        if 'tv' not in vals:
+            error_log.write('[ERROR] '+vals['c']+' tv not in id list\n')
+            continue
+        if 'v' not in vals:
+            error_log.write('[ERROR] '+vals['c']+' v not in id list\n')
+            continue
+        if 'a' not in vals:
+            error_log.write('[ERROR] '+vals['c']+' a not in id list\n')
+            continue
+        if 'f' not in vals:
+            error_log.write('[ERROR] '+vals['c']+' f not in id list\n')
+            continue
+        if 'b' not in vals:
+            error_log.write('[ERROR] '+vals['c']+' b not in id list\n')
+            continue
+        if 'g' not in vals:
+            error_log.write('[ERROR] '+vals['c']+' g not in id list\n')
+            continue
         if vals['c'] not in stock_id_list:
             error_log.write('[ERROR] '+vals['c']+'not in id list\n')
             continue
