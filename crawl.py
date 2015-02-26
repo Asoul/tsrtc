@@ -6,7 +6,7 @@ import json
 import csv
 from os import mkdir
 from os.path import isdir, isfile, join
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 import sys
 import math
 
@@ -64,27 +64,27 @@ else:
             vals = content['msgArray'][i]
 
             # 檢查資料是否錯誤
-            if 'c' not in vals: raise Exception('c not in content')
-            if type(vals['c']) != str: raise Exception('c type in content')
-            
-            if 'd' not in vals: raise Exception(vals['c']+'d not in content')
-            if 't' not in vals: raise Exception(vals['c']+'t not in content')
-            if 'z' not in vals: raise Exception(vals['c']+'z not in content')
-            if 'v' not in vals: raise Exception(vals['c']+'v not in content')
-            if 'a' not in vals: raise Exception(vals['c']+'a not in content')
-            if 'f' not in vals: raise Exception(vals['c']+'f not in content')
-            if 'b' not in vals: raise Exception(vals['c']+'b not in content')
-            if 'g' not in vals: raise Exception(vals['c']+'g not in content')
-            if 'tv' not in vals: raise Exception(vals['c']+'tv not in content')
+            if 'c' not in vals: raise Exception(' c not in content')
+            if type(vals['c']) != unicode: raise Exception(' c type error')
 
-            if vals['c'] not in stock_id_list: raise Exception(vals['c']+'c not in stock_id list')
+            if 'd' not in vals: raise Exception(vals['c']+' d not in content')
+            if 't' not in vals: raise Exception(vals['c']+' t not in content')
+            if 'z' not in vals: raise Exception(vals['c']+' z not in content')
+            if 'v' not in vals: raise Exception(vals['c']+' v not in content')
+            if 'a' not in vals: raise Exception(vals['c']+' a not in content')
+            if 'f' not in vals: raise Exception(vals['c']+' f not in content')
+            if 'b' not in vals: raise Exception(vals['c']+' b not in content')
+            if 'g' not in vals: raise Exception(vals['c']+' g not in content')
+            if 'tv' not in vals: raise Exception(vals['c']+' tv not in content')
+
+            if vals['c'] not in stock_id_list: raise Exception(vals['c']+' c not in stock_id list')
 
             # 如果是在超過凌晨 12 點到隔日開市前抓，要算昨天的
             if vals['d'] != today:
                 yesterday = date.today() - timedelta(1)
                 today = str(yesterday.year).zfill(4)+str(yesterday.month).zfill(2)+str(yesterday.day).zfill(2)
                 if vals['d'] != today:
-                    raise Exception(vals['c']+"Date Error")
+                    raise Exception(vals['c']+" Date Error")
                 # 昨天沒有資料夾的話要補上
                 if not isdir(join('data',today)):
                     mkdir(join('data',today))

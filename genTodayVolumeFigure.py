@@ -17,14 +17,16 @@ for stock_id in index_list:
     dist = dict()
     f = open(join('data', today, stock_id+'.csv'), 'rb')
     for row in csv.reader(f, delimiter =','):
-        # t, z, tv, v,
-        
+
         # 如果沒有交易成功，就跳過
         try:
             float(row[1])
         except:
             print 'Q_Q'
             continue
+
+        # 資料格式
+        # t, z, tv, v
 
         # 開盤第一筆    
         if len(dist) == 0:
@@ -41,15 +43,26 @@ for stock_id in index_list:
         elif float(row[1]) == last_z and int(row[2]) == int(row[3]) - last_v:
             dist[last_z] += int(row[2])
 
-        # 價變了
-        elif float(row[1]) != last_z:
+        # 價變了，中間交易有抓到
+        elif float(row[1]) != last_z and int(row[2]) == int(row[3]) - last_v:
             if float(row[1]) in dist:
                 dist[float(row[1])] += int(row[2])
             else:
                 dist[float(row[1])] = int(row[2])
-        # 錯誤情況處理
-        # else:
-            # print row
+
+        # 沒有抓到中間交易，但價位相同，暫時直接補上差額股數
+        # elif float(row[1]) == last_z: 
+            # dist[float(row[1])] += int(row[3]) - last_v
+
+        # 沒有抓到中間交易，而且價位變了
+        else:
+            # diff_stock = int(row[3]) - last_v - int(row[2])
+            # dist[last_z] += diff_stock
+
+            if float(row[1]) in dist:
+                dist[float(row[1])] += int(row[2])
+            else:
+                dist[float(row[1])] = int(row[2])
 
         last_z = float(row[1])
         last_tv = int(row[2])
@@ -59,9 +72,12 @@ for stock_id in index_list:
     for i in dist:
         tmplist.append([float(i), int(dist[i])])
     tmplist.sort(key=lambda x: float(x[0]))
-    stock_count = 0
+    stock_count = 0.0
+    print stock_id
     for i in tmplist:
-        # print i[0], i[1]
         stock_count += i[1]
-    print 'count rate = %f' % (float(stock_count)/last_v)
+        print '%.2f: %7d' % (i[0], i[1])
+    print '(%.5f%%)' % (stock_count/last_v*100)
+    print ""
+    # print stock_id, ' = %f' % (float(stock_count)/last_v)
     # break
