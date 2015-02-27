@@ -79,15 +79,9 @@ else:
 
             if vals['c'] not in stock_id_list: raise Exception(vals['c']+' c not in stock_id list')
 
-            # 如果是在超過凌晨 12 點到隔日開市前抓，要算昨天的
+            # 如果是在超過凌晨 12 點到隔日開市前，就不要抓
             if vals['d'] != today:
-                yesterday = date.today() - timedelta(1)
-                today = str(yesterday.year).zfill(4)+str(yesterday.month).zfill(2)+str(yesterday.day).zfill(2)
-                if vals['d'] != today:
-                    raise Exception(vals['c']+" Date Error")
-                # 昨天沒有資料夾的話要補上
-                if not isdir(join('data',today)):
-                    mkdir(join('data',today))
+                break
 
             # 資料格式
             # - t：資料時間，ex. `13:30:00`
