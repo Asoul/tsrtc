@@ -58,7 +58,7 @@ for stock_id in index_list:
         else:
             # diff_stock = int(row[3]) - last_v - int(row[2])
             # dist[last_z] += diff_stock
-
+            print row
             if float(row[1]) in dist:
                 dist[float(row[1])] += int(row[2])
             else:
@@ -80,4 +80,4 @@ for stock_id in index_list:
     print '(%.5f%%)' % (stock_count/last_v*100)
     print ""
     # print stock_id, ' = %f' % (float(stock_count)/last_v)
-    # break
+    break
