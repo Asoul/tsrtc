@@ -54,7 +54,7 @@ try:
 except Exception as e:
 
     # 資料 request 錯誤
-    err_str = '[ERROR] '+datetime.now().strftime('%Y/%M/%d %H:%m:%S') + e.message
+    err_str = '[ERROR] '+datetime.now().strftime('%Y/%m/%d %H:%m:%s') + e.message
     print err_str
     error_log.write(err_str+'\n')
 
@@ -98,7 +98,7 @@ else:
             cw.writerow([vals['t'], vals['z'], vals['tv'], vals['v'], vals['a'], vals['f'], vals['b'], vals['g']])
     
         except Exception as e:
-            err_str = '[ERROR] '+datetime.now().strftime('%Y/%M/%d %H:%m:%S') + e.message
+            err_str = '[ERROR] '+datetime.now().strftime('%Y/%m/%d %H:%m:%s') + e.message
             print err_str
             error_log.write(err_str+'\n')
             continue
