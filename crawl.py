@@ -52,9 +52,9 @@ try:
         raise Exception("Can not find msgArray")
 
 except Exception as e:
-
     # 資料 request 錯誤
-    err_str = '[ERROR] '+datetime.now().strftime('%Y/%m/%d %H:%m:%s') + e.message
+    t = datetime.now()
+    err_str = '[ERROR] '+ ('%s/%s/%s %s:%s:%s ' % (t.year, t.month, t.day, t.hour, t.minute, t.second)) + e.message
     print err_str
     error_log.write(err_str+'\n')
 
@@ -65,17 +65,10 @@ else:
 
             # 檢查資料是否錯誤
             if 'c' not in vals: raise Exception(' c not in content')
-            if type(vals['c']) != unicode: raise Exception(' c type error')
 
-            if 'd' not in vals: raise Exception(vals['c']+' d not in content')
-            if 't' not in vals: raise Exception(vals['c']+' t not in content')
-            if 'z' not in vals: raise Exception(vals['c']+' z not in content')
-            if 'v' not in vals: raise Exception(vals['c']+' v not in content')
-            if 'a' not in vals: raise Exception(vals['c']+' a not in content')
-            if 'f' not in vals: raise Exception(vals['c']+' f not in content')
-            if 'b' not in vals: raise Exception(vals['c']+' b not in content')
-            if 'g' not in vals: raise Exception(vals['c']+' g not in content')
-            if 'tv' not in vals: raise Exception(vals['c']+' tv not in content')
+            for v in ['t', 'z', 'd', 'v', 'a', 'f', 'b', 'g', 'tv']:
+                if v not in vals:
+                    continue
 
             if vals['c'] not in stock_id_list: raise Exception(vals['c']+' c not in stock_id list')
 
@@ -98,7 +91,8 @@ else:
             cw.writerow([vals['t'], vals['z'], vals['tv'], vals['v'], vals['a'], vals['f'], vals['b'], vals['g']])
     
         except Exception as e:
-            err_str = '[ERROR] '+datetime.now().strftime('%Y/%m/%d %H:%m:%s') + e.message
+            t = datetime.now()
+            err_str = '[ERROR] '+ ('%s/%s/%s %s:%s:%s ' % (t.year, t.month, t.day, t.hour, t.minute, t.second)) + e.message
             print err_str
             error_log.write(err_str+'\n')
             continue
