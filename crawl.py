@@ -11,10 +11,7 @@ import sys
 import math
 
 # 從 stocknumber.csv 中讀出要爬的股票清單
-stock_id_list = []
-f = open('stocknumber.csv', 'rb')
-for row in csv.reader(f, delimiter=','):
-    stock_id_list.append(row[0])
+stock_id_list = [line.strip() for line in open('stocknumber.csv', 'rb')]
 
 # 拆成小的 subtasks 的號碼
 if len(sys.argv) == 3:

@@ -18,9 +18,11 @@
 
 比如說把清單很長要分成三份的話，就可以分三隻爬蟲平行跑：
 
-`python crawl.py 0 3`
-`python crawl.py 1 3`
-`python crawl.py 2 3`
+```
+python crawl.py 0 3
+python crawl.py 1 3
+python crawl.py 2 3
+```
 
 ### 資料完整性
 
@@ -39,6 +41,10 @@
 ### Crontab 產生
 
 `python genCrontabScript.py` 可以產生每三秒戳一次的 crontab。
+
+### 其他
+
+1. 如果在凌晨 12 點之後到開市前要抓，目前 default 設置是不給抓的，怕昨天已經清理過檔案，又把資料用髒了。
 
 ## 資料格式
 
@@ -86,7 +92,10 @@ ex. `13:30:00,43.25,616,6690,43.25_43.30_43.35_43.40_43.45_,216_285_90_274_201_,
 http://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=STOCK_NUMBER&json=1&delay=0
 ```
 
-example: [API 點擊測試](http://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=1101.tw&json=1&delay=0)
+example:
+
+[API 點擊測試1](http://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_1101.tw&json=1&delay=0)
+[API 點擊測試2](http://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_1101.tw|tse_0050.tw&json=1&delay=0)
 
 - STOCK_NUMBER 是該隻股票的種類和號碼，ex. `tse_1101.tw`，也可以用 `|` 一次 query 很多筆股票資料。ex. `tse_1101.tw|tse_1102.tw|tse_1103.tw`
 - json=1 不知為何，但參考的程式碼中是如此設定的

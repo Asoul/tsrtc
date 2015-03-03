@@ -25,9 +25,6 @@ for stock_id in index_list:
             print 'Q_Q'
             continue
 
-        # 資料格式
-        # t, z, tv, v
-
         # 開盤第一筆    
         if len(dist) == 0:
             dist[float(row[1])] = int(row[3])
@@ -50,15 +47,8 @@ for stock_id in index_list:
             else:
                 dist[float(row[1])] = int(row[2])
 
-        # 沒有抓到中間交易，但價位相同，暫時直接補上差額股數
-        # elif float(row[1]) == last_z: 
-            # dist[float(row[1])] += int(row[3]) - last_v
-
-        # 沒有抓到中間交易，而且價位變了
+        # 沒有抓到中間交易
         else:
-            # diff_stock = int(row[3]) - last_v - int(row[2])
-            # dist[last_z] += diff_stock
-            print row
             if float(row[1]) in dist:
                 dist[float(row[1])] += int(row[2])
             else:
@@ -79,5 +69,3 @@ for stock_id in index_list:
         print '%.2f: %7d' % (i[0], i[1])
     print '(%.5f%%)' % (stock_count/last_v*100)
     print ""
-    # print stock_id, ' = %f' % (float(stock_count)/last_v)
-    break
