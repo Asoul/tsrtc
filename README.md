@@ -28,7 +28,25 @@ python crawl.py 2 3
 
 雖然說官方文件說 5 秒會更新一次，但是爬蟲實際上戳，即便已經改成 3 秒戳一次了，每天總會漏掉一些交易，所以價量圖並不完善，約只能涵蓋 `99%` 的資料。
 
-`python genTodayVolumeFigure.py` 可以產生今天的價量圖。
+`python genTodayVolumeFigure.py` 可以產生今天的價量圖，ex：
+
+```
+9914
+250.00:      39
+250.50:     123
+251.00:       8
+251.50:      58
+252.00:     122
+252.50:      87
+253.00:     198
+253.50:      91
+254.00:      38
+254.50:     103
+255.00:      29
+255.50:       9
+256.00:       1
+(99.77974%)
+```
 
 ### 資料整理
 
@@ -94,8 +112,10 @@ http://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=STOCK_NUMBER&json=1&dela
 
 example:
 
-[API 點擊測試1](http://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_1101.tw&json=1&delay=0)
-[API 點擊測試2](http://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_1101.tw|tse_0050.tw&json=1&delay=0)
+1. [API 點擊測試1](http://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_1101.tw&json=1&delay=0)
+2. [API 點擊測試2](http://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_1101.tw|tse_0050.tw&json=1&delay=0)
+
+參數設置：
 
 - STOCK_NUMBER 是該隻股票的種類和號碼，ex. `tse_1101.tw`，也可以用 `|` 一次 query 很多筆股票資料。ex. `tse_1101.tw|tse_1102.tw|tse_1103.tw`
 - json=1 不知為何，但參考的程式碼中是如此設定的
