@@ -65,7 +65,7 @@ else:
 
             for v in ['t', 'z', 'd', 'v', 'a', 'f', 'b', 'g', 'tv']:
                 if v not in vals:
-                    continue
+                    raise Exception("Not Found")
 
             if vals['c'] not in stock_id_list: raise Exception(vals['c']+' c not in stock_id list')
 
@@ -88,8 +88,8 @@ else:
             cw.writerow([vals['t'], vals['z'], vals['tv'], vals['v'], vals['a'], vals['f'], vals['b'], vals['g']])
     
         except Exception as e:
-            t = datetime.now()
-            err_str = '[ERROR] '+ ('%s/%s/%s %s:%s:%s ' % (t.year, t.month, t.day, t.hour, t.minute, t.second)) + e.message
-            print err_str
-            error_log.write(err_str+'\n')
+            # t = datetime.now()
+            # err_str = '[ERROR] '+ ('%s/%s/%s %s:%s:%s ' % (t.year, t.month, t.day, t.hour, t.minute, t.second)) + e.message
+            # print err_str
+            # error_log.write(err_str+'\n')
             continue
