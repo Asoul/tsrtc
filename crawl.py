@@ -9,6 +9,7 @@ from os.path import isdir, isfile, join
 from datetime import date, timedelta, datetime
 import sys
 import math
+import time
 
 # 從 stocknumber.csv 中讀出要爬的股票清單
 stock_id_list = [line.strip() for line in open('stocknumber.csv', 'rb')]
@@ -22,16 +23,19 @@ else:
     task_from = 0
     task_to = len(stock_id_list)
 
+# 今天年月日
+today = str(date.today().year).zfill(4)+str(date.today().month).zfill(2)+str(date.today().day).zfill(2)
+
+# 現在時間的 tlong
+tlong = int(round(time.time() * 1000))
+
 # 連結 query
 query_ids = ""
 for i in stock_id_list[task_from:task_to]:
-    query_ids += ('tse_'+i+'.tw|')
+    query_ids += ('tse_'+i+'.tw_'+str(today)+'|')
 
 # 錯誤輸出檔案
 error_log = open('error.log', 'a')
-
-# 今天年月日
-today = str(date.today().year).zfill(4)+str(date.today().month).zfill(2)+str(date.today().day).zfill(2)
 
 # 如果資料夾不存在，就開新的一天的資料夾
 if not isdir(join('data',today)):
@@ -39,7 +43,7 @@ if not isdir(join('data',today)):
 
 # 把每一隻都爬一遍
 try:
-    page = requests.get('http://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch='+query_ids[:-1]+'&json=1&delay=0')
+    page = requests.get('http://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch='+query_ids[:-1]+'&json=1&delay=0&_='+str(tlong))
     if page.status_code != 200:
         raise Exception("HTTP Request Failed")
 
