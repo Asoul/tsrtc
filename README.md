@@ -2,31 +2,21 @@
 
 這是一個會爬 150 隻當沖清單的 crawler，此外也分析了台灣證券交易所的 api。
 
-## Note!!!
+## 更新
 
-目前 API 好像壞了，待修理!
+之前的 bug 修好了，順便把 crawl.py 重寫了，現在比較有架構，可讀性提升。
 
 ## 使用方法
 
 `python crawl.py`
 
-可以爬當下 150 隻當沖股票的即刻資訊。
+可以爬當下 257 隻當沖股票的即刻資訊。
 
 ## 注意事項
 
 ### 更改清單
 
-若要改抓取的清單，可以把 `stocknumber.csv` 中的股票編號換掉就好了。如果編號太多的話，就要分散爬蟲，方法為：
-
-`python crawl.py nth total`： nth 是第幾隻爬蟲的意思，編號從 0 開始；total 是總共有幾隻的意思。
-
-比如說把清單很長要分成三份的話，就可以分三隻爬蟲平行跑：
-
-```
-python crawl.py 0 3
-python crawl.py 1 3
-python crawl.py 2 3
-```
+若要改抓取的清單，可以把 `stocknumber.csv` 中的股票編號換掉就好了。
 
 ### 資料完整性
 
@@ -64,10 +54,6 @@ python crawl.py 2 3
 
 `python genCrontabScript.py` 可以產生每三秒戳一次的 crontab。
 
-### 其他
-
-1. 如果在凌晨 12 點之後到開市前要抓，目前 default 設置是不給抓的，怕昨天已經清理過檔案，又把資料用髒了。
-
 ## 資料格式
 
 每天的資料會存在 `data` 中，當天的日期資料夾內（ex. `20150303`），裡面把所有抓的資料按股票編號放 `XXXX.csv` 中，`XXXX` 就是股票編號。
@@ -88,10 +74,6 @@ ex. `13:30:00,43.25,616,6690,43.25_43.30_43.35_43.40_43.45_,216_285_90_274_201_,
 
 [台灣證券交易所 - 基本市況報導網站](http://mis.twse.com.tw/stock/fibest.jsp)
 
-## TODO
-
-- 改善 missing data
-
 ## 證交所 API Document （偽）
 
 經過解析 [基本市況報導網站](http://mis.twse.com.tw/stock/fibest.jsp) 下所執行的 Javascript 檔（可以參考 `/ctrl-reference` ），整理出了 twse 的 API 清單如下：
@@ -111,7 +93,7 @@ ex. `13:30:00,43.25,616,6690,43.25_43.30_43.35_43.40_43.45_,216_285_90_274_201_,
 其中 `getStockInfo` 可以用來抓取當前的交易資訊，用法如下：
 
 ```
-http://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=STOCK_NUMBER&json=1&delay=0
+http://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=STOCK_NUMBER
 ```
 
 example:
@@ -122,8 +104,6 @@ example:
 參數設置：
 
 - STOCK_NUMBER 是該隻股票的種類和號碼，ex. `tse_1101.tw_20150624`，也可以用 `|` 一次 query 很多筆股票資料。ex. `tse_1101.tw_20150624|tse_1102.tw_20150624|tse_1103.tw_20150624`
-- json=1 不知為何，但參考的程式碼中是如此設定的
-- delay=0 不知為何，但參考的程式碼中是如此設定的
 
 ### getStockInfo Response
 
@@ -186,7 +166,7 @@ example:
 
 有 Bug 麻煩跟我說：`azx754@gmail.com`
 
-最後更新時間：`2015/03/03`
+最後更新時間：`2015/08/07`
 
 ## 我的其他專案
 

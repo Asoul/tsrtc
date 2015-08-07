@@ -5,95 +5,97 @@ import requests
 import json
 import csv
 from os import mkdir
-from os.path import isdir, isfile, join
-from datetime import date, timedelta, datetime
-import sys
-import math
-import time
+from os.path import isdir
+from datetime import date
 
-# 從 stocknumber.csv 中讀出要爬的股票清單
-stock_id_list = [line.strip() for line in open('stocknumber.csv', 'rb')]
+class CrawlerController():
+    '''Split targetList into several Crawler'''
 
-# 拆成小的 subtasks 的號碼
-if len(sys.argv) == 3:
-    task_from = int(sys.argv[1]) * int(math.ceil(len(stock_id_list)/int(sys.argv[2])))
-    task_to = min((int(sys.argv[1])+1) * int(math.ceil(len(stock_id_list)/int(sys.argv[2]))), len(stock_id_list))
+    def __init__(self, targetList, maxN = 50):
+        self.crawlerList = []
 
-else:
-    task_from = 0
-    task_to = len(stock_id_list)
+        for i in range(len(targetList) / maxN + 1):
+            crawler = Crawler(targetList[maxN * i: maxN * (i+1)])
+            self.crawlerList.append(crawler)
 
-# 今天年月日
-today = str(date.today().year).zfill(4)+str(date.today().month).zfill(2)+str(date.today().day).zfill(2)
+    def getStockData(self):
+        dataList = []
 
-# 現在時間的 tlong
-tlong = int(round(time.time() * 1000))
+        for crawler in self.crawlerList:
+            dataList.extend(crawler.getStockData())
 
-# 連結 query
-query_ids = ""
-for i in stock_id_list[task_from:task_to]:
-    query_ids += ('tse_'+i+'.tw_'+str(today)+'|')
+        return dataList
 
-# 錯誤輸出檔案
-error_log = open('error.log', 'a')
+class Crawler():
+    '''request to Market Information System'''
 
-# 如果資料夾不存在，就開新的一天的資料夾
-if not isdir(join('data',today)):
-    mkdir(join('data',today))
+    def __init__(self, targetList):
+        self.queryURL = self._getQueryURL(targetList)
 
-# 把每一隻都爬一遍
-try:
-    page = requests.get('http://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch='+query_ids[:-1]+'&json=1&delay=0&_='+str(tlong))
-    if page.status_code != 200:
-        raise Exception("HTTP Request Failed")
+    def _getQueryURL(self, targetList):
 
-    content = json.loads(page.content)
+        query = 'http://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch='
+        for target in targetList:
+            query += ('tse_{}.tw|'.format(target))
 
-    if 'msgArray' not in content or len(content['msgArray']) == 0:
-        raise Exception("Can not find msgArray")
+        return query[:-1]
 
-except Exception as e:
-    # 資料 request 錯誤
-    t = datetime.now()
-    err_str = '[ERROR] '+ ('%s/%s/%s %s:%s:%s ' % (t.year, t.month, t.day, t.hour, t.minute, t.second)) + e.message
-    print err_str
-    error_log.write(err_str+'\n')
-
-else:
-    for i in range(len(content['msgArray'])):
+    def _handleResponse(self, response):
         try:
-            vals = content['msgArray'][i]
+            content = json.loads(response.content)
+        except Exception, e:
+            print e
+            data = {}
+        else:
+            data = content['msgArray']
+        finally:
+            return data
 
-            # 檢查資料是否錯誤
-            if 'c' not in vals: raise Exception(' c not in content')
+    def getStockData(self):    
+        # 先戳原頁面，再拿資料
+        req = requests.session()
+        req.get('http://mis.twse.com.tw/stock/index.jsp',
+            headers = {'Accept-Language':'zh-TW'}
+        )
 
-            for v in ['t', 'z', 'd', 'v', 'a', 'f', 'b', 'g', 'tv']:
-                if v not in vals:
-                    raise Exception("Not Found")
+        response = req.get(self.queryURL)
+        dataList = self._handleResponse(response)
 
-            if vals['c'] not in stock_id_list: raise Exception(vals['c']+' c not in stock_id list')
+        return dataList
+        
+class Recorder():
+    '''record data to csv'''
+    def __init__(self, path='data'):
+        self.folderPath = '{}/{}'.format(path, date.today().strftime('%Y%m%d'))
+        self._checkTodayFolder()
 
-            # 如果是在超過凌晨 12 點到隔日開市前，就不要抓
-            if vals['d'] != today:
-                break
+    def _checkTodayFolder(self):
+        if not isdir(self.folderPath):
+            mkdir(self.folderPath)
 
-            # 資料格式
-            # - t：資料時間，ex. `13:30:00`
-            # - z：最近成交價，ex. `42.85`
-            # - tv：Temporal Volume，當盤成交量，ex. `1600`
-            # - v：Volume，當日累計成交量，ex. `11608`
-            # - a：最佳五檔賣出價格，ex. `42.85_42.90_42.95_43.00_43.05_`
-            # - f：最價五檔賣出數量，ex. `83_158_277_571_233_`
-            # - b：最佳五檔買入價格，ex. `42.80_42.75_42.70_42.65_42.60_`
-            # - g：最佳五檔買入數量，ex. `10_28_10_2_184_`
+    def recordCSV(self, dataList):
 
-            fo = open(join('data', today, vals['c']+'.csv'), 'ab')
-            cw = csv.writer(fo, delimiter=',')
-            cw.writerow([vals['t'], vals['z'], vals['tv'], vals['v'], vals['a'], vals['f'], vals['b'], vals['g']])
+        for data in dataList:
+            try:
+                fo = open('{}/{}.csv'.format(self.folderPath, data['c']), 'ab')
+                cw = csv.writer(fo, delimiter=',')
+                cw.writerow([data['t'], data['z'], data['tv'], data['v'],
+                    data['a'], data['f'], data['b'], data['g']]
+                )
+        
+            except Exception as e:
+                print e
+                continue
+
+def main():
     
-        except Exception as e:
-            # t = datetime.now()
-            # err_str = '[ERROR] '+ ('%s/%s/%s %s:%s:%s ' % (t.year, t.month, t.day, t.hour, t.minute, t.second)) + e.message
-            # print err_str
-            # error_log.write(err_str+'\n')
-            continue
+    targetList = [_.strip() for _ in open('stocknumber.csv', 'rb')]
+
+    controller = CrawlerController(targetList)
+    recorder = Recorder()
+
+    dataList = controller.getStockData()
+    recorder.recordCSV(dataList)
+    
+if __name__ == '__main__':
+    main()
