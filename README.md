@@ -6,6 +6,8 @@
 
 之前的 bug 修好了，順便把 crawl.py 重寫了，現在比較有架構，可讀性提升。
 
+因為歷史檔案過大，導致伺服器錯誤，所以將過去資料放到 [Mega](https://mega.nz/#!HZs2HQhS!rbHJDdhr87911DnwIjvUIEZu1W2MOqOm4ihiUnmEM4o) 上。
+
 ## 使用方法
 
 `python crawl.py`
