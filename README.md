@@ -1,12 +1,22 @@
 # Taiwan Stock Real Time Crawler
 
-這是一個會爬 150 隻當沖清單的 crawler，此外也分析了台灣證券交易所的 api。
+這是一個會爬 257 隻當沖清單的 crawler，此外也分析了台灣證券交易所的 API。
 
-## 更新
+## 更新 (2016/10/14)
 
-之前的 bug 修好了，順便把 crawl.py 重寫了，現在比較有架構，可讀性提升。
+- 修復前幾天 API 會驗證 timestamp 的 bug
+- 重構了 `crawl.py`，精簡語法、增加可讀性
+- 相容 python2, python3
 
-因為歷史檔案過大，導致伺服器錯誤，所以將過去資料放到 [Mega](https://mega.nz/#!HZs2HQhS!rbHJDdhr87911DnwIjvUIEZu1W2MOqOm4ihiUnmEM4o) 上。
+## 環境需求
+
+- Python2 or Python3
+
+## 安裝相關套件
+
+```
+pip install requests
+```
 
 ## 使用方法
 
@@ -95,17 +105,13 @@ ex. `13:30:00,43.25,616,6690,43.25_43.30_43.35_43.40_43.45_,216_285_90_274_201_,
 其中 `getStockInfo` 可以用來抓取當前的交易資訊，用法如下：
 
 ```
-http://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=STOCK_NUMBER
+http://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=STOCK_NUMBER&_=CURRENT_TIME
 ```
-
-example:
-
-1. [API 點擊測試1](http://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_1101.tw&json=1&delay=0)
-2. [API 點擊測試2](http://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_1101.tw|tse_0050.tw&json=1&delay=0)
 
 參數設置：
 
 - STOCK_NUMBER 是該隻股票的種類和號碼，ex. `tse_1101.tw_20150624`，也可以用 `|` 一次 query 很多筆股票資料。ex. `tse_1101.tw_20150624|tse_1102.tw_20150624|tse_1103.tw_20150624`
+- CURRENT_TIME 是當下的 epoch time，單位是毫秒
 
 ### getStockInfo Response
 
@@ -168,7 +174,7 @@ example:
 
 有 Bug 麻煩跟我說：`azx754@gmail.com`
 
-最後更新時間：`2015/08/07`
+最後更新時間：`2016/10/14`
 
 ## 我的其他專案
 
