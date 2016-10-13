@@ -1,101 +1,92 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import requests
+import os
 import json
 import csv
-from os import mkdir
-from os.path import isdir
+import time
+
 from datetime import date
 
-class CrawlerController():
-    '''Split targetList into several Crawler'''
+import requests
 
-    def __init__(self, targetList, maxN = 50):
-        self.crawlerList = []
+class CrawlerController(object):
+    '''Split targets into several Crawler, avoid request url too long'''
 
-        for i in range(len(targetList) / maxN + 1):
-            crawler = Crawler(targetList[maxN * i: maxN * (i+1)])
-            self.crawlerList.append(crawler)
+    def __init__(self, targets, max_stock_per_crawler=50):
+        self.crawlers = []
 
-    def getStockData(self):
-        dataList = []
+        for index in range(0, len(targets), max_stock_per_crawler):
+            crawler = Crawler(targets[index:index + max_stock_per_crawler])
+            self.crawlers.append(crawler)
 
-        for crawler in self.crawlerList:
-            dataList.extend(crawler.getStockData())
+    def run(self):
+        data = []
+        for crawler in self.crawlers:
+            data.extend(crawler.get_data())
+        return data
 
-        return dataList
+class Crawler(object):
+    '''Request to Market Information System'''
+    def __init__(self, targets):
+        endpoint = 'http://mis.twse.com.tw/stock/api/getStockInfo.jsp'
+        # Add 1000 seconds for prevent time inaccuracy
+        timestamp = int(time.time() * 1000 + 1000000)
+        channels = '|'.join('tse_{}.tw'.format(target) for target in targets)
+        self.query_url = '{}?_={}&ex_ch={}'.format(endpoint, timestamp, channels)
 
-class Crawler():
-    '''request to Market Information System'''
-
-    def __init__(self, targetList):
-        self.queryURL = self._getQueryURL(targetList)
-
-    def _getQueryURL(self, targetList):
-
-        query = 'http://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch='
-        for target in targetList:
-            query += ('tse_{}.tw|'.format(target))
-
-        return query[:-1]
-
-    def _handleResponse(self, response):
+    def get_data(self):
         try:
-            content = json.loads(response.content)
-        except Exception, e:
-            print e
-            data = {}
+            # Get original page to get session
+            req = requests.session()
+            req.get('http://mis.twse.com.tw/stock/index.jsp',
+                    headers={'Accept-Language': 'zh-TW'})
+
+            response = req.get(self.query_url)
+            content = json.loads(response.text)
+        except Exception as err:
+            print(err)
+            data = []
         else:
             data = content['msgArray']
-        finally:
-            return data
 
-    def getStockData(self):    
-        # 先戳原頁面，再拿資料
-        req = requests.session()
-        req.get('http://mis.twse.com.tw/stock/index.jsp',
-            headers = {'Accept-Language':'zh-TW'}
-        )
+        return data
 
-        response = req.get(self.queryURL)
-        dataList = self._handleResponse(response)
-
-        return dataList
-        
-class Recorder():
-    '''record data to csv'''
+class Recorder(object):
+    '''Record data to csv'''
     def __init__(self, path='data'):
-        self.folderPath = '{}/{}'.format(path, date.today().strftime('%Y%m%d'))
-        self._checkTodayFolder()
+        self.folder_path = '{}/{}'.format(path, date.today().strftime('%Y%m%d'))
+        if not os.path.isdir(self.folder_path):
+            os.mkdir(self.folder_path)
 
-    def _checkTodayFolder(self):
-        if not isdir(self.folderPath):
-            mkdir(self.folderPath)
-
-    def recordCSV(self, dataList):
-
-        for data in dataList:
+    def record_to_csv(self, data):
+        for row in data:
             try:
-                fo = open('{}/{}.csv'.format(self.folderPath, data['c']), 'ab')
-                cw = csv.writer(fo, delimiter=',')
-                cw.writerow([data['t'], data['z'], data['tv'], data['v'],
-                    data['a'], data['f'], data['b'], data['g']]
-                )
-        
-            except Exception as e:
-                print e
-                continue
+                file_path = '{}/{}.csv'.format(self.folder_path, row['c'])
+                with open(file_path, 'a') as output_file:
+                    writer = csv.writer(output_file, delimiter=',')
+                    writer.writerow([
+                        row['t'],# 資料時間
+                        row['z'],# 最近成交價
+                        row['tv'],# 當盤成交量
+                        row['v'],# 當日累計成交量
+                        row['a'],# 最佳五檔賣出價格
+                        row['f'],# 最價五檔賣出數量
+                        row['b'],# 最佳五檔買入價格
+                        row['g']# 最佳五檔買入數量
+                    ])
+
+            except Exception as err:
+                print(err)
 
 def main():
-    
-    targetList = [_.strip() for _ in open('stocknumber.csv', 'rb')]
+    targets = [_.strip().decode() for _ in open('stocknumber.csv', 'rb')]
 
-    controller = CrawlerController(targetList)
+    controller = CrawlerController(targets)
+    data = controller.run()
+
     recorder = Recorder()
+    recorder.record_to_csv(data)
 
-    dataList = controller.getStockData()
-    recorder.recordCSV(dataList)
-    
 if __name__ == '__main__':
     main()
