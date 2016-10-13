@@ -80,7 +80,7 @@ class Recorder(object):
                 print(err)
 
 def main():
-    targets = [_.strip().decode() for _ in open('stocknumber.csv', 'rb')]
+    targets = [_.strip() for _ in open('stocknumber.csv', 'r')]
 
     controller = CrawlerController(targets)
     data = controller.run()
