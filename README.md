@@ -2,12 +2,6 @@
 
 這是一個會爬 257 隻當沖清單的 crawler，此外也分析了台灣證券交易所的 API。
 
-## 更新 (2016/10/14)
-
-- 修復前幾天 API 會驗證 timestamp 的 bug
-- 重構了 `crawl.py`，精簡語法、增加可讀性
-- 相容 python2, python3
-
 ## 環境需求
 
 - Python2 or Python3
@@ -22,7 +16,7 @@ pip install requests
 
 `python crawl.py`
 
-可以爬當下 257 隻當沖股票的即刻資訊。
+可以爬當下 50 隻當沖股票的即刻資訊。
 
 ## 注意事項
 
@@ -174,7 +168,7 @@ http://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=STOCK_NUMBER&_=CURRENT_T
 
 有 Bug 麻煩跟我說：`azx754@gmail.com`
 
-最後更新時間：`2016/10/14`
+最後更新時間：`2017/02/15`
 
 ## 我的其他專案
 
