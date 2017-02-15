@@ -2,6 +2,10 @@
 
 這是一個會爬台股即時資訊的爬蟲，此外也分析了台灣證券交易所的 API。
 
+## 討論室
+
+有問題的話可以到 [Gitter.im](https://gitter.im/taiwan-stock/Lobby) 發問，會盡快回答
+
 ## 環境需求
 
 - Python2 or Python3
@@ -171,7 +175,10 @@ http://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=STOCK_NUMBER&_=CURRENT_T
 
 ## 聯絡我
 
-有 Bug 麻煩跟我說：`azx754@gmail.com`
+有 Bug 麻煩跟我說：
+
+- [Gitter.im](https://gitter.im/taiwan-stock/Lobby)
+- `azx754@gmail.com`
 
 最後更新時間：`2017/02/15`
 
