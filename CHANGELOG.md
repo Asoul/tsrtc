@@ -4,6 +4,7 @@
 
 - 嘗試修正過去一段時間無法爬的 bug，似乎是清單太久未更新
 - 減少爬的數量，變成只爬五十隻
+- 把過去資料放到 [Mega](https://mega.nz/#!rc9m3CjR!echcpcdjV4Ayq5QZIvcFRJzt46CH-IXDGc2bl3tgX50)
 
 ## 2016/10/14
 

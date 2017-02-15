@@ -56,9 +56,14 @@ pip install requests
 
 每天收盤後我抓完會 push 到 github 上，如果需要的話可以 `git pull` 我，當然如果你也有自己抓的話，每天也可以自己更新囉。
 
+因為機器空間不足，所以過去的資料放到 Mega 上：
+
+- [2015/08/13 ~ 2016/10/13](https://mega.nz/#!rc9m3CjR!echcpcdjV4Ayq5QZIvcFRJzt46CH-IXDGc2bl3tgX50)
+- [2015/02/26 ~ 2015/08/12](https://mega.nz/#!HZs2HQhS!rbHJDdhr87911DnwIjvUIEZu1W2MOqOm4ihiUnmEM4o)
+
 ### Crontab 產生
 
-`python genCrontabScript.py` 可以產生每三秒戳一次的 crontab。
+`python genCrontabScript.py` 可以產生每五秒戳一次的 crontab。
 
 ## 資料格式
 
