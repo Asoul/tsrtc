@@ -1,6 +1,6 @@
 # Taiwan Stock Real Time Crawler
 
-這是一個會爬 257 隻當沖清單的 crawler，此外也分析了台灣證券交易所的 API。
+這是一個會爬台股即時資訊的爬蟲，此外也分析了台灣證券交易所的 API。
 
 ## 環境需求
 
